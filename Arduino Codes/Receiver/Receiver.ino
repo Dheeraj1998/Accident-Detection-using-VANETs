@@ -8,27 +8,27 @@ const int receive_pin = 11;
 
 void setup()
 {
-    // Debug message to check setup status.
-    delay(1000);
-    Serial.begin(9600);
-    Serial.println("Setup is complete.");
+  // Debug message to check setup status.
+  delay(1000);
+  Serial.begin(9600);
+  Serial.println("Setup is complete.");
 
-    // Initialise the IO and ISR
-//    vw_set_tx_pin(transmit_pin);
-    vw_set_rx_pin(receive_pin);
-//    vw_set_ptt_pin(transmit_en_pin);
+  // Initialise the IO and ISR
+  //    vw_set_tx_pin(transmit_pin);
+  vw_set_rx_pin(receive_pin);
+  //    vw_set_ptt_pin(transmit_en_pin);
 
-    // Required for DR3100
-    vw_set_ptt_inverted(true); 
+  // Required for DR3100
+  vw_set_ptt_inverted(true);
 
-    // Bits per sec
-    vw_setup(2000);	 
+  // Bits per sec
+  vw_setup(2000);
 
-    // Start the receiver PLL running
-    vw_rx_start();       
+  // Start the receiver PLL running
+  vw_rx_start();
 
-    // Setting up the pins
-    pinMode(led_pin, OUTPUT);
+  // Setting up the pins
+  pinMode(led_pin, OUTPUT);
 }
 
 // Timeout before resetting the receiver.
@@ -43,20 +43,20 @@ void loop() {
 
   // Execute code on receiving message.
   if (vw_get_message(buf, &buflen)) {
-    
+
     // Flash a light to show received good message
     digitalWrite(led_pin, HIGH);
-    
+
     // Message with a good checksum received, dump it.
-	  Serial.print("Got: ");
+    Serial.print("Got: ");
     for (int i = 0; i < buflen; i++) {
       Serial.write(buf[i]);
     }
 
-	  Serial.println();
-//      digitalWrite(led_pin, LOW);
+    Serial.println();
+    //      digitalWrite(led_pin, LOW);
   }
-  
+
   count += 1;
 
   if (count == timeout) {
