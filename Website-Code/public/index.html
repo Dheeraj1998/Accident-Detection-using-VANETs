@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Accident Locations | VANET System</title>
+
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=[API Key]&callback=initMap"></script>
+
+    <style>
+      body {
+        background-image: url('background_image.png');
+      }
+
+      #map {
+        height: 700px;
+        width: 100%;
+      }
+
+      hr {
+        color: #f00;
+        background-color: #f00;
+        height: 5px;
+        border: none;
+      }
+    </style>
+
+  <body>
+    <div id = "map"></div>
+    <hr>
+  </body>
+
+  <script>
+    // Script to setup the map object
+      var map;
+      var bounds;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 2,
+          center: new google.maps.LatLng(2.8,-187.3),
+          mapTypeId: 'terrain'
+        });
+
+        bounds = new google.maps.LatLngBounds();
+      }
+
+
+  </script>
+
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyDQKaDWKH2drvtMfAtPWVjmvCwb0PaXsZI",
+      authDomain: "vanet-system.firebaseapp.com",
+      databaseURL: "https://vanet-system.firebaseio.com",
+      projectId: "vanet-system",
+      storageBucket: "vanet-system.appspot.com",
+      messagingSenderId: "863342100685"
+    };
+
+    firebase.initializeApp(config);
+
+    // Setting up the database for Firebase
+    var database = firebase.database();
+
+    // Setting up the reference to the database
+    var accidentRef = firebase.database().ref('accident_data');
+
+    accidentRef.on('value', function(snapshot){
+      snapshot.forEach(function(child){
+          var unique_id = child.val().unique_id + "";
+          var latLng = new google.maps.LatLng(child.val().gps_lat, child.val().gps_long);
+          bounds.extend({lat: child.val().gps_lat, lng: child.val().gps_long});
+          var marker = new google.maps.Marker({
+            title: unique_id,
+            position: latLng,
+            map: map
+          });
+
+          map.fitBounds(bounds);
+      });
+    });
+
+  </script>
+</html>
